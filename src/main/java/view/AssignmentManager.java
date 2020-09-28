@@ -153,7 +153,7 @@ public class AssignmentManager extends JInternalFrame {
 		i = 0;
 		for (Assignment ls : list) {
 			if (ls.isStatus()) {
-				defaultTable.addRow(new Object[] { ls.getId(), ls.getProject_id(), ls.getEmployee_id(),
+				defaultTable.addRow(new Object[] { ++i, ls.getProject_id(), ls.getEmployee_id(),
 						(ls.getDone() > 0) ? "Complete" : "Executing", ls.getDatejoin() });
 			}
 

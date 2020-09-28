@@ -184,7 +184,12 @@ public class TransferManager extends JInternalFrame {
 		for (MouseListener listener : basicInternalFrameUI.getNorthPane().getMouseListeners()) {
 			basicInternalFrameUI.getNorthPane().removeMouseListener(listener);
 		}
+		if(cuser.getUsername().equals("admin")) {
+			btnAccept.setVisible(false);
+			btnRefuse.setVisible(false);
+		}
 	}
+	
 
 	private void loadListToTable() {
 		list = new BaoTransfer().getTranfer(null, cuser.getBranchId());
@@ -205,18 +210,36 @@ public class TransferManager extends JInternalFrame {
 		defaultTable.addColumn("Censorship");
 		i = 0;
 		for (Transfer ls : list) {
-			if (ls.getDepartment_new() == null && ls.getDepartment_old() == null||ls.getDepartment_new().equals("") && ls.getDepartment_old().equals("")) {
-				if (ls.isStatus()) {
-					if (ls.getPart() > 0) {
-						defaultTable.addRow(
-								new Object[] { ls.getId(), ls.getEmp_id(), ls.getProject_old(), ls.getProject_new(),
-										ls.getDescription(), ls.getDate(), ls.isCheck() ? "Accept" : "Refuse" });
-					} else if (ls.getPart() == 0 && ls.isCheck() == false) {
-						defaultTable.addRow(new Object[] { ls.getId(), ls.getEmp_id(), ls.getProject_old(),
-								ls.getProject_new(), ls.getDescription(), ls.getDate(), "Waiting for approval" });
+			if (cuser.getListBranch() != null) {
+				if (ls.getDepartment_new() == null && ls.getDepartment_old() == null
+						|| ls.getDepartment_new().equals("") && ls.getDepartment_old().equals("")) {
+					if (ls.isStatus()) {
+						if (ls.getPart() > 0) {
+							defaultTable.addRow(
+									new Object[] { ++i, ls.getEmp_id(), ls.getProject_old(), ls.getProject_new(),
+											ls.getDescription(), ls.getDate(), ls.isCheck() ? "Accept" : "Refuse" });
+						} else if (ls.getPart() == 1 && ls.isCheck() == false) {
+							defaultTable.addRow(new Object[] { ++i, ls.getEmp_id(), ls.getProject_old(),
+									ls.getProject_new(), ls.getDescription(), ls.getDate(), "Waiting for approval" });
+						}
+					}
+				}
+			}else {
+				if (ls.getDepartment_new() == null && ls.getDepartment_old() == null
+						|| ls.getDepartment_new().equals("") && ls.getDepartment_old().equals("")) {
+					if (ls.isStatus()) {
+						if (ls.getPart() > 0) {
+							defaultTable.addRow(
+									new Object[] { ++i, ls.getEmp_id(), ls.getProject_old(), ls.getProject_new(),
+											ls.getDescription(), ls.getDate(), ls.isCheck() ? "Accept" : "Refuse" });
+						} else if (ls.getPart() == 0 && ls.isCheck() == false) {
+							defaultTable.addRow(new Object[] { ++i, ls.getEmp_id(), ls.getProject_old(),
+									ls.getProject_new(), ls.getDescription(), ls.getDate(), "Waiting for approval" });
+						}
 					}
 				}
 			}
+
 		}
 
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -228,24 +251,17 @@ public class TransferManager extends JInternalFrame {
 		table.getColumnModel().getColumn(5).setPreferredWidth(118);
 		table.getColumnModel().getColumn(6).setPreferredWidth(120);
 	}
-	
-//	 public void addBranchToTable(String id) {
-//			Branch branch = new BaoBranch().getFromId(id);
-//	    	list.add(branch);
-//	    	DefaultTableModel model = (DefaultTableModel) table.getModel();
-//	    	model.addRow(new Object[] {
-//	    			++i, branch.getId(), branch.getName(), branch.getStatus()
-//			});
-//		 }
-	 public void addNewToTable(String id, String oldProject, String newProject) {
-			Transfer transfer = new BaoTransfer().loadTableTransfer(id, oldProject, newProject);
-	    	list.add(transfer);
-	    	DefaultTableModel model = (DefaultTableModel) table.getModel();
-	    	model.addRow(new Object[] {
-	    			transfer.getId(), transfer.getEmp_id(), transfer.getProject_old(), transfer.getProject_new(),
-	    			transfer.getDescription(), transfer.getDate(), transfer.isCheck() ? "Accept" : "Refuse"			});
-	    	loadListToTable();
-	 }
+
+
+	public void addNewToTable(String id, String oldProject, String newProject) {
+		Transfer transfer = new BaoTransfer().loadTableTransfer(id, oldProject, newProject);
+		list.add(transfer);
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		model.addRow(new Object[] { transfer.getId(), transfer.getEmp_id(), transfer.getProject_old(),
+				transfer.getProject_new(), transfer.getDescription(), transfer.getDate(),
+				transfer.isCheck() ? "Accept" : "Refuse" });
+		loadListToTable();
+	}
 
 	protected void btnAddActionPerformed(ActionEvent e) {
 		new AddTransfer(cuser).setVisible(true);
@@ -289,11 +305,11 @@ public class TransferManager extends JInternalFrame {
 
 	protected void btnAcceptActionPerformed(ActionEvent e) {
 		int row = table.getSelectedRow();
-		if(row < 0) {
+		if (row < 0) {
 			JOptionPane.showMessageDialog(this, "Select Row on table", "Error", JOptionPane.ERROR_MESSAGE);
-		}else if(table.getValueAt(row, 6).equals("Accept")||table.getValueAt(row, 6).equals("Refuse")) {
+		} else if (table.getValueAt(row, 6).equals("Accept") || table.getValueAt(row, 6).equals("Refuse")) {
 			JOptionPane.showMessageDialog(this, "Transfer is has review", "Error", JOptionPane.ERROR_MESSAGE);
-		}else {
+		} else {
 			ResultsMessage rm = new BaoTransfer().censorship((String) table.getValueAt(row, 0), 1, cuser.getUsername(),
 					(String) table.getValueAt(row, 2), (String) table.getValueAt(row, 3));
 			if (rm.getNum() > 0) {
@@ -301,16 +317,16 @@ public class TransferManager extends JInternalFrame {
 			}
 			rm.showMessage(null);
 		}
-		
+
 	}
 
 	protected void btnRefuseActionPerformed(ActionEvent e) {
 		int row = table.getSelectedRow();
-		if(row < 0) {
+		if (row < 0) {
 			JOptionPane.showMessageDialog(this, "Select Row on table", "Error", JOptionPane.ERROR_MESSAGE);
-		}else if(table.getValueAt(row, 6).equals("Accept")||table.getValueAt(row, 6).equals("Refuse")) {
+		} else if (table.getValueAt(row, 6).equals("Accept") || table.getValueAt(row, 6).equals("Refuse")) {
 			JOptionPane.showMessageDialog(this, "Transfer is has review", "Error", JOptionPane.ERROR_MESSAGE);
-		}else {
+		} else {
 			ResultsMessage rm = new BaoTransfer().censorship((String) table.getValueAt(row, 0), 0, cuser.getUsername(),
 					(String) table.getValueAt(row, 2), (String) table.getValueAt(row, 3));
 			if (rm.getNum() > 0) {
@@ -318,22 +334,23 @@ public class TransferManager extends JInternalFrame {
 			}
 			rm.showMessage(null);
 		}
-		
+
 	}
 
 	protected void btnDeleteActionPerformed(ActionEvent e) {
 		int row = table.getSelectedRow();
-		if(table.getSelectedRow() < 0) {
+		if (table.getSelectedRow() < 0) {
 			JOptionPane.showMessageDialog(this, "Select Row on table", "Error", JOptionPane.ERROR_MESSAGE);
-		}else {
+		} else {
 			ResultsMessage rm = new BaoTransfer().delete_project((String) table.getValueAt(row, 0));
 			if (rm.getNum() > 0) {
 				loadListToTable();
 			}
 			rm.showMessage(null);
 		}
-		
+
 	}
+
 	public void reLoadTable() {
 		table.removeAll();
 		loadListToTable();
