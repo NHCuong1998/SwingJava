@@ -58,6 +58,7 @@ public class TransferManager extends JInternalFrame {
 	private List<Transfer> list;
 	private int i = 0;
 	private CurrentUser cuser = new CurrentUser();
+	private JButton btnRefresh;
 
 	/**
 	 * Launch the application.
@@ -140,34 +141,52 @@ public class TransferManager extends JInternalFrame {
 		lblNewLabel.setForeground(Color.BLUE);
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+		
+		btnRefresh = new JButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnRefreshActionPerformed(e);
+			}
+		});
 
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
-				.createSequentialGroup().addContainerGap()
-				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 979, Short.MAX_VALUE)
 						.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(btnAdd, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(btnDelete, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE)
-								.addGap(18)
-								.addComponent(btnAccept, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(btnRefuse, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
-								.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 390, GroupLayout.PREFERRED_SIZE))
+							.addComponent(btnAdd, GroupLayout.PREFERRED_SIZE, 122, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnDelete)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnRefresh, GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(btnAccept, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnRefuse, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
+							.addGap(30)
+							.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 353, GroupLayout.PREFERRED_SIZE))
 						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 979, GroupLayout.PREFERRED_SIZE))
-				.addContainerGap()));
-		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup().addGap(17)
-						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-										GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnAdd).addComponent(btnDelete).addComponent(btnAccept)
-								.addComponent(btnRefuse))
-						.addGap(15).addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)));
+					.addContainerGap())
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(17)
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnAdd)
+						.addComponent(btnDelete)
+						.addComponent(btnRefresh)
+						.addComponent(btnAccept)
+						.addComponent(btnRefuse))
+					.addGap(15)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE))
+		);
 
 		table = new JTable();
 		table.addMouseListener(new MouseAdapter() {
@@ -200,7 +219,8 @@ public class TransferManager extends JInternalFrame {
 			};
 		};
 		table.setModel(defaultTable);
-
+		
+		defaultTable.addColumn("#");
 		defaultTable.addColumn("ID");
 		defaultTable.addColumn("Name User");
 		defaultTable.addColumn("Old Project");
@@ -216,10 +236,10 @@ public class TransferManager extends JInternalFrame {
 					if (ls.isStatus()) {
 						if (ls.getPart() > 0) {
 							defaultTable.addRow(
-									new Object[] { ++i, ls.getEmp_id(), ls.getProject_old(), ls.getProject_new(),
+									new Object[] { ++i, ls.getId(), ls.getEmp_id(), ls.getProject_old(), ls.getProject_new(),
 											ls.getDescription(), ls.getDate(), ls.isCheck() ? "Accept" : "Refuse" });
 						} else if (ls.getPart() == 1 && ls.isCheck() == false) {
-							defaultTable.addRow(new Object[] { ++i, ls.getEmp_id(), ls.getProject_old(),
+							defaultTable.addRow(new Object[] { ++i, ls.getId(), ls.getEmp_id(), ls.getProject_old(),
 									ls.getProject_new(), ls.getDescription(), ls.getDate(), "Waiting for approval" });
 						}
 					}
@@ -230,10 +250,10 @@ public class TransferManager extends JInternalFrame {
 					if (ls.isStatus()) {
 						if (ls.getPart() > 0) {
 							defaultTable.addRow(
-									new Object[] { ++i, ls.getEmp_id(), ls.getProject_old(), ls.getProject_new(),
+									new Object[] { ++i, ls.getId(), ls.getEmp_id(), ls.getProject_old(), ls.getProject_new(),
 											ls.getDescription(), ls.getDate(), ls.isCheck() ? "Accept" : "Refuse" });
 						} else if (ls.getPart() == 0 && ls.isCheck() == false) {
-							defaultTable.addRow(new Object[] { ++i, ls.getEmp_id(), ls.getProject_old(),
+							defaultTable.addRow(new Object[] { ++i,ls.getId(), ls.getEmp_id(), ls.getProject_old(),
 									ls.getProject_new(), ls.getDescription(), ls.getDate(), "Waiting for approval" });
 						}
 					}
@@ -244,12 +264,13 @@ public class TransferManager extends JInternalFrame {
 
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.getColumnModel().getColumn(0).setPreferredWidth(70);
-		table.getColumnModel().getColumn(1).setPreferredWidth(190);
-		table.getColumnModel().getColumn(2).setPreferredWidth(120);
-		table.getColumnModel().getColumn(3).setPreferredWidth(160);
-		table.getColumnModel().getColumn(4).setPreferredWidth(200);
-		table.getColumnModel().getColumn(5).setPreferredWidth(118);
-		table.getColumnModel().getColumn(6).setPreferredWidth(120);
+		table.getColumnModel().getColumn(1).setPreferredWidth(70);
+		table.getColumnModel().getColumn(2).setPreferredWidth(190);
+		table.getColumnModel().getColumn(3).setPreferredWidth(120);
+		table.getColumnModel().getColumn(4).setPreferredWidth(160);
+		table.getColumnModel().getColumn(5).setPreferredWidth(200);
+		table.getColumnModel().getColumn(6).setPreferredWidth(118);
+		table.getColumnModel().getColumn(7).setPreferredWidth(120);
 	}
 
 
@@ -353,6 +374,9 @@ public class TransferManager extends JInternalFrame {
 
 	public void reLoadTable() {
 		table.removeAll();
+		loadListToTable();
+	}
+	protected void btnRefreshActionPerformed(ActionEvent e) {
 		loadListToTable();
 	}
 }

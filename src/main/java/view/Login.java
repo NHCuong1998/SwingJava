@@ -215,6 +215,7 @@ public class Login extends JFrame {
 				getJFrame(cuser);
 			}else {
 				JOptionPane.showMessageDialog(this, "Id or password is incorrect!", "Error", JOptionPane.ERROR_MESSAGE);
+				txtPassword.setText("");
 			}
 		}
 	}

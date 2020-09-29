@@ -82,6 +82,7 @@ public class UserTransfer extends JInternalFrame {
 	private JScrollPane scrollPane_2;
 	private JTextPane txtReasonDepartment;
 	private JButton btnNewButton;
+	private JButton btnRefresh;
 	
 	
 	
@@ -154,17 +155,26 @@ public class UserTransfer extends JInternalFrame {
 				btnDeleteActionPerformed(e);
 			}
 		});
+		
+		btnRefresh = new JButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnRefreshActionPerformed(e);
+			}
+		});
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
+				.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(lblNewLabel_5)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 303, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnDelete, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(396, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnRefresh, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+					.addComponent(lblNewLabel_5)
+					.addGap(18)
+					.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 303, GroupLayout.PREFERRED_SIZE)
+					.addGap(256))
 				.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 859, Short.MAX_VALUE)
 		);
 		gl_panel.setVerticalGroup(
@@ -172,9 +182,10 @@ public class UserTransfer extends JInternalFrame {
 				.addGroup(gl_panel.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_5)
+						.addComponent(btnDelete)
 						.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnDelete))
+						.addComponent(lblNewLabel_5)
+						.addComponent(btnRefresh))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
 		);
@@ -367,8 +378,14 @@ public class UserTransfer extends JInternalFrame {
 	
 	private void comboBoxSetValue() {
 		listCB = new BaoGetComboBox().getList("Project Of Department", cuser.getUsername());
+		listCB1 = new BaoGetComboBox().getList("Project Of Employee", cuser.getUsername());
 		for (ComboItem item :listCB) {
-			cbbNewProject.addItem(new ComboItem(item.getId(), item.getValue()));
+			for (ComboItem item1 :listCB1) {
+				if(!item1.getId().equals(item.getId())) {
+					cbbNewProject.addItem(new ComboItem(item.getId(), item.getValue()));
+				}
+			}
+			
 		}
 	}
 	private void comboBoxSetValue1() {
@@ -453,5 +470,8 @@ public class UserTransfer extends JInternalFrame {
 			 }
 			 rm.showMessage(null);
 		}
+	}
+	protected void btnRefreshActionPerformed(ActionEvent e) {
+		loadListToTable();
 	}
 }

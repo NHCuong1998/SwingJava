@@ -140,9 +140,9 @@ public class AddTransfer extends JFrame {
 					.addGap(32)
 					.addComponent(btnExitAddTransfer, GroupLayout.PREFERRED_SIZE, 91, GroupLayout.PREFERRED_SIZE)
 					.addGap(176))
-				.addGroup(gl_contentPane.createSequentialGroup()
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 					.addGap(65)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblNewLabel_4)
 							.addContainerGap())
@@ -202,7 +202,9 @@ public class AddTransfer extends JFrame {
 	private void comboBoxSetValue1() {
 		listCB1 = new BaoGetComboBox().getList("Employee Of Branch", cuser.getUsername());
 		for (ComboItem item : listCB1) {
+			if(!item.getId().equals(cuser.getUsername())) {
 			cbbEmployee.addItem(new ComboItem(item.getId(), item.getValue()));
+			}
 		}
 
 	}
@@ -221,8 +223,14 @@ public class AddTransfer extends JFrame {
 
 		listCB3 = new BaoGetComboBox().getList("Project Of Department", emp);
 		for (ComboItem item : listCB3) {
-//				cbbNewProject.addItem("Currently the department has no project.");			
-				cbbNewProject.addItem(new ComboItem(item.getId(), item.getValue()));
+			for (ComboItem item1 : listCB2) {
+				if(!item.getId().equals(item1.getId())) {
+//					cbbNewProject.addItem("Currently the department has no project.");	
+					cbbNewProject.addItem(new ComboItem(item.getId(), item.getValue()));
+				}
+			}
+		
+				
 			
 		}
 

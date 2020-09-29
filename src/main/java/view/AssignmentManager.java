@@ -144,7 +144,8 @@ public class AssignmentManager extends JInternalFrame {
 			};
 		};
 		table.setModel(defaultTable);
-
+		
+		defaultTable.addColumn("#");
 		defaultTable.addColumn("id");
 		defaultTable.addColumn("Name Project");
 		defaultTable.addColumn("Name Employee");
@@ -153,7 +154,7 @@ public class AssignmentManager extends JInternalFrame {
 		i = 0;
 		for (Assignment ls : list) {
 			if (ls.isStatus()) {
-				defaultTable.addRow(new Object[] { ++i, ls.getProject_id(), ls.getEmployee_id(),
+				defaultTable.addRow(new Object[] { ++i,ls.getId(), ls.getProject_id(), ls.getEmployee_id(),
 						(ls.getDone() > 0) ? "Complete" : "Executing", ls.getDatejoin() });
 			}
 
@@ -161,10 +162,11 @@ public class AssignmentManager extends JInternalFrame {
 
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.getColumnModel().getColumn(0).setPreferredWidth(90);
-		table.getColumnModel().getColumn(1).setPreferredWidth(230);
+		table.getColumnModel().getColumn(1).setPreferredWidth(90);
 		table.getColumnModel().getColumn(2).setPreferredWidth(230);
-		table.getColumnModel().getColumn(3).setPreferredWidth(220);
-		table.getColumnModel().getColumn(4).setPreferredWidth(193);
+		table.getColumnModel().getColumn(3).setPreferredWidth(230);
+		table.getColumnModel().getColumn(4).setPreferredWidth(220);
+		table.getColumnModel().getColumn(5).setPreferredWidth(193);
 	}
 
 	protected void btnAddActionPerformed(ActionEvent e) {
@@ -179,7 +181,7 @@ public class AssignmentManager extends JInternalFrame {
 		if (row == -1) {
 			JOptionPane.showMessageDialog(this, "Select Row on table", "Error", JOptionPane.ERROR_MESSAGE);
 		} else {
-			ResultsMessage rm = new BaoAssignment().delete((String) table.getValueAt(row, 0));
+			ResultsMessage rm = new BaoAssignment().delete((String) table.getValueAt(row, 1));
 			if(rm.getNum() > 0) {
 				loadListToTable();
 			 }
